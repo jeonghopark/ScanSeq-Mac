@@ -64,6 +64,10 @@ public:
     void gotMessage(ofMessage msg);
 
     void audioRequested(float * output, int Buffersize, int nChannels);
+//    void audioOut(ofSoundBuffer & buffer);
+
+    ofSoundStream soundStream;
+
     
     LineOnOff lineOnOffs;
     ofEvent<LineOnOff> onOff[20];
