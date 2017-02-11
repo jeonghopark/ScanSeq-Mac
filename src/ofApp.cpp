@@ -80,7 +80,7 @@ void ofApp::setup(){
     settings.setOutListener(this);
     settings.sampleRate = 44100;
     auto devices = soundStream.getMatchingDevices("default");
-//        auto devices = soundStream.getDeviceList();
+    //        auto devices = soundStream.getDeviceList();
     if (!devices.empty()) {
         settings.setOutDevice(devices[1]);
     }
@@ -95,14 +95,14 @@ void ofApp::setup(){
     int _leftLineRatio = (int)cameraHeight / leftTwentyLineNumber;
     twentyPixelColor.resize(_leftLineRatio);
     linecolors.resize(leftTwentyLineNumber);
-
-
-//    ofSoundStreamSetup(2, 0, this, 44100, 256, 4);
-
-//    soundStream.setDeviceID(1);
-//    soundStream.setup(this, 2, 0, 44100, 256, 4);
-
-
+    
+    
+    //    ofSoundStreamSetup(2, 0, this, 44100, 256, 4);
+    
+    //    soundStream.setDeviceID(1);
+    //    soundStream.setup(this, 2, 0, 44100, 256, 4);
+    
+    
 }
 
 
@@ -148,11 +148,11 @@ void ofApp::update(){
             _temp.b = pix[_index+2];
             twentyPixelColor[_countIndex] = _temp;
             
-                        LineColor _lineColor;
-                        _lineColor.fRed = pix[_index];
-                        _lineColor.fGreen = pix[_index+1];
-                        _lineColor.fBlue = pix[_index+2];
-                        linecolors[_countIndex] = _lineColor;
+            LineColor _lineColor;
+            _lineColor.fRed = pix[_index];
+            _lineColor.fGreen = pix[_index+1];
+            _lineColor.fBlue = pix[_index+2];
+            linecolors[_countIndex] = _lineColor;
             
         }
         
@@ -162,54 +162,54 @@ void ofApp::update(){
         
         
         
-//        if (linecolors.size() > 0) {
+        //        if (linecolors.size() > 0) {
         
-            for (int i=0; i<leftTwentyLineNumber; i++){
+        for (int i=0; i<leftTwentyLineNumber; i++){
+            
+            float _sumColor = linecolors[i].fRed + linecolors[i].fGreen + linecolors[i].fBlue;
+            
+            LineOnOff _lineOnOff;
+            
+            if (_sumColor<100) {
+                _lineOnOff.index = i;
+                _lineOnOff.bOnOff = true;
+                ofNotifyEvent(onOff[i], _lineOnOff);
+                ofRemoveListener(onOff[i], this, &ofApp::onOffTest);
                 
-                float _sumColor = linecolors[i].fRed + linecolors[i].fGreen + linecolors[i].fBlue;
-                
-                LineOnOff _lineOnOff;
-                
-                if (_sumColor<100) {
-                    _lineOnOff.index = i;
-                    _lineOnOff.bOnOff = true;
-                    ofNotifyEvent(onOff[i], _lineOnOff);
-                    ofRemoveListener(onOff[i], this, &ofApp::onOffTest);
-                    
-                } else {
-                    _lineOnOff.index = i;
-                    _lineOnOff.bOnOff = false;
-                    ofNotifyEvent(onOff[i], _lineOnOff);
-                    ofAddListener(onOff[i], this, &ofApp::onOffTest);
-                }
-                
-                
-                if (linecolors[i].bNoteTrigger) {
-                    synth1.setParameter("trigger1", 1);
-                    synth1.setParameter("carrierPitch1", scale[i]+80);
-                    linecolors[i].bNoteTrigger = false;
-                    circleMovings[i].movVertical = ofGetWidth()/2;
-                    circleMovings[i].movingFactor = circleMovigSpeed;
-                }
-                
-                if (circleMovings[i].bMovingTrigger) {
-                    circleMovings[i].movVertical = circleMovings[i].movVertical - circleMovings[i].movingFactor;
-                    if (circleMovings[i].movVertical < 0) {
-                        circleMovings[i].movVertical = ofGetWidth()/2;
-                        circleMovings[i].movingFactor = 0;
-                    }
-                }
-                
+            } else {
+                _lineOnOff.index = i;
+                _lineOnOff.bOnOff = false;
+                ofNotifyEvent(onOff[i], _lineOnOff);
+                ofAddListener(onOff[i], this, &ofApp::onOffTest);
             }
             
-//        }
+            
+            if (linecolors[i].bNoteTrigger) {
+                synth1.setParameter("trigger1", 1);
+                synth1.setParameter("carrierPitch1", scale[i]+80);
+                linecolors[i].bNoteTrigger = false;
+                circleMovings[i].movVertical = ofGetWidth()/2;
+                circleMovings[i].movingFactor = circleMovigSpeed;
+            }
+            
+            if (circleMovings[i].bMovingTrigger) {
+                circleMovings[i].movVertical = circleMovings[i].movVertical - circleMovings[i].movingFactor;
+                if (circleMovings[i].movVertical < 0) {
+                    circleMovings[i].movVertical = ofGetWidth()/2;
+                    circleMovings[i].movingFactor = 0;
+                }
+            }
+            
+        }
+        
+        //        }
         
         
         if (twentyPixelColor.size()>20) {
             //            twentyPixelColor.clear();
-//            linecolors.clear();
+            //            linecolors.clear();
         }
-
+        
         
     }
     
@@ -239,21 +239,21 @@ void ofApp::onOffTest(LineOnOff & _lineOnOff){
 //--------------------------------------------------------------
 void ofApp::draw() {
     
-//    ofScale(0.5, 0.5);
+    //    ofScale(0.5, 0.5);
     
     ofPushMatrix();
-//    ofTranslate(0, ofGetHeight());
-//    ofRotateX(180);
+    //    ofTranslate(0, ofGetHeight());
+    //    ofRotateX(180);
     
     float _videoRatio = 1;
     tex.draw( ofGetWidth()*3/4 - cameraWidth * _videoRatio/4, 0, cameraWidth * _videoRatio, cameraHeight * _videoRatio );
     
-        
+    
     if (grabber.isFrameNew()) {
         
         ofPushMatrix();
         ofPushStyle();
-
+        
         if (pixelColor.size()>0) {
             for (int i=0; i<cameraHeight; i++) {
                 //                ofSetLineWidth(1);
@@ -283,7 +283,7 @@ void ofApp::draw() {
                 //            ofSetLineWidth(1);
                 
                 float _leftEnd = ofGetHeight()/2 - leftTwentyLineNumber/2 + i;
-                float _left2ndEnd = ofGetHeight()/2 - leftTwentyLineNumber/2*10 + i*10;
+                float _left2ndEnd = ofGetHeight()/2 - leftTwentyLineNumber/2*20 + i*20;
                 
                 ofPoint _leftPoint = ofPoint(ofGetWidth()*5/8, _leftEnd);
                 ofPoint _rightPoint = ofPoint(ofGetWidth()*4/8, _left2ndEnd);
@@ -294,18 +294,18 @@ void ofApp::draw() {
                 ofDrawLine(_left2ndPoint, _right2ndPoint);
             }
         }
-
+        
         ofPopStyle();
         ofPopMatrix();
-    
-    
+        
+        
         ofPushMatrix();
         ofPushStyle();
-    
+        
         for (int i=0; i<leftTwentyLineNumber; i++) {
             ofDrawCircle(circleMovings[i].movVertical, circleMovings[i].position, 3);
         }
-    
+        
         ofPopStyle();
         ofPopMatrix();
         
@@ -317,12 +317,12 @@ void ofApp::draw() {
     ofPopMatrix();
     
     
-//        ofPushMatrix();
-//        ofPushStyle();
-//        ofSetColor(ofColor::fromHsb(0, 0, 255, 255));
-//        ofDrawBitmapString( "Fr : " + ofToString(ofGetFrameRate(), 1), 10, ofGetHeight()-15 );
-//        ofPopStyle();
-//        ofPopMatrix();
+    //        ofPushMatrix();
+    //        ofPushStyle();
+    //        ofSetColor(ofColor::fromHsb(0, 0, 255, 255));
+    //        ofDrawBitmapString( "Fr : " + ofToString(ofGetFrameRate(), 1), 10, ofGetHeight()-15 );
+    //        ofPopStyle();
+    //        ofPopMatrix();
     
     
     
@@ -343,7 +343,7 @@ void ofApp::draw() {
 //--------------------------------------------------------------
 void ofApp::exit(){
     
-//    std::exit(0);
+    //    std::exit(0);
     
 }
 
@@ -352,7 +352,7 @@ void ofApp::exit(){
 void ofApp::audioRequested(float *output, int Buffersize, int nChannels){
     
     synthMain.fillBufferOfFloats(output, Buffersize, nChannels);
-
+    
 }
 
 
