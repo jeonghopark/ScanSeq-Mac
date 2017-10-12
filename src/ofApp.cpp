@@ -127,7 +127,7 @@ void ofApp::update(){
         tex.loadData(pix, cameraWidth, cameraHeight, GL_RGB);
         
         for (int i=0; i<cameraHeight; i++){
-            int _index = cameraWidth * 3 * i + cameraWidth * 3.0/4.0;
+            int _index = cameraWidth * 3 * i + cameraWidth * 3.0 / 4.0;
             ofColor _temp;
             _temp.r = pix[_index];
             _temp.g = pix[_index+1];
@@ -249,8 +249,8 @@ void ofApp::draw() {
     tex.draw( ofGetWidth()*3/4 - cameraWidth * _videoRatio/4, 0, cameraWidth * _videoRatio, cameraHeight * _videoRatio );
     
     
-    if (grabber.isFrameNew()) {
-        
+//    if (grabber.isFrameNew()) {
+    
         ofPushMatrix();
         ofPushStyle();
         
@@ -310,7 +310,7 @@ void ofApp::draw() {
         ofPopMatrix();
         
         
-    }
+//    }
     
     
     
