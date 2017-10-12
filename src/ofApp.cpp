@@ -7,8 +7,8 @@ int scale[20] = {-48,-24,-10,0,2,4,5,7,9,11,12,14,16,17,19,21,23,24,36,48};
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-    
-    
+
+
     ofSetFrameRate(60);
     
     plotHeight = 128;
@@ -73,7 +73,7 @@ void ofApp::setup(){
         circleMovings.push_back(_lc);
     }
     
-    circleMovigSpeed = 30;
+    circleMovigSpeed = 10;
     
     
     ofSoundStreamSettings settings;
@@ -110,11 +110,11 @@ void ofApp::setup(){
 
 //--------------------------------------------------------------
 void ofApp::update(){
-    
+
     grabber.update();
     
     if (grabber.isFrameNew()) {
-        
+
         unsigned char * src = grabber.getPixels().getData();
         
         for (int i=0; i<cameraHeight; i++){
@@ -124,94 +124,94 @@ void ofApp::update(){
             }
         }
         
-        tex.loadData(pix, cameraWidth, cameraHeight, GL_RGB);
-        
-        for (int i=0; i<cameraHeight; i++){
-            int _index = cameraWidth * 3 * i + cameraWidth * 3.0 / 4.0;
-            ofColor _temp;
-            _temp.r = pix[_index];
-            _temp.g = pix[_index+1];
-            _temp.b = pix[_index+2];
-            pixelColor[i] = _temp;
-        }
-        
-        
-        int _leftLineRatio = (int)cameraHeight / leftTwentyLineNumber;
-        
-        int _countIndex = -1;
-        for (int i=0; i<cameraHeight; i+=_leftLineRatio) {
-            int _index = cameraWidth*3 * i + cameraWidth*3/4;
-            _countIndex++;
-            ofColor _temp;
-            _temp.r = pix[_index];
-            _temp.g = pix[_index+1];
-            _temp.b = pix[_index+2];
-            twentyPixelColor[_countIndex] = _temp;
-            
-            LineColor _lineColor;
-            _lineColor.fRed = pix[_index];
-            _lineColor.fGreen = pix[_index+1];
-            _lineColor.fBlue = pix[_index+2];
-            linecolors[_countIndex] = _lineColor;
-            
-        }
-        
+    }
+    tex.loadData(pix, cameraWidth, cameraHeight, GL_RGB);
+
+    for (int i=0; i<cameraHeight; i++){
+        int _index = cameraWidth * 3 * i + cameraWidth * 3.0 / 4.0;
+        ofColor _temp;
+        _temp.r = pix[_index];
+        _temp.g = pix[_index+1];
+        _temp.b = pix[_index+2];
+        pixelColor[i] = _temp;
+    }
+
+
+    int _leftLineRatio = (int)cameraHeight / leftTwentyLineNumber;
+
+    int _countIndex = -1;
+    for (int i=0; i<cameraHeight; i+=_leftLineRatio) {
+        int _index = cameraWidth*3 * i + cameraWidth*3/4;
+        _countIndex++;
+        ofColor _temp;
+        _temp.r = pix[_index];
+        _temp.g = pix[_index+1];
+        _temp.b = pix[_index+2];
+        twentyPixelColor[_countIndex] = _temp;
+
+        LineColor _lineColor;
+        _lineColor.fRed = pix[_index];
+        _lineColor.fGreen = pix[_index+1];
+        _lineColor.fBlue = pix[_index+2];
+        linecolors[_countIndex] = _lineColor;
+
+    }
+
         //        if (pixelColor.size()>cameraHeight) {
         //            pixelColor.clear();
         //        }
-        
-        
-        
+
+
         //        if (linecolors.size() > 0) {
-        
-        for (int i=0; i<leftTwentyLineNumber; i++){
-            
-            float _sumColor = linecolors[i].fRed + linecolors[i].fGreen + linecolors[i].fBlue;
-            
-            LineOnOff _lineOnOff;
-            
-            if (_sumColor<100) {
-                _lineOnOff.index = i;
-                _lineOnOff.bOnOff = true;
-                ofNotifyEvent(onOff[i], _lineOnOff);
-                ofRemoveListener(onOff[i], this, &ofApp::onOffTest);
-                
-            } else {
-                _lineOnOff.index = i;
-                _lineOnOff.bOnOff = false;
-                ofNotifyEvent(onOff[i], _lineOnOff);
-                ofAddListener(onOff[i], this, &ofApp::onOffTest);
-            }
-            
-            
-            if (linecolors[i].bNoteTrigger) {
-                synth1.setParameter("trigger1", 1);
-                synth1.setParameter("carrierPitch1", scale[i]+80);
-                linecolors[i].bNoteTrigger = false;
-                circleMovings[i].movVertical = ofGetWidth()/2;
-                circleMovings[i].movingFactor = circleMovigSpeed;
-            }
-            
-            if (circleMovings[i].bMovingTrigger) {
-                circleMovings[i].movVertical = circleMovings[i].movVertical - circleMovings[i].movingFactor;
-                if (circleMovings[i].movVertical < 0) {
-                    circleMovings[i].movVertical = ofGetWidth()/2;
-                    circleMovings[i].movingFactor = 0;
-                }
-            }
-            
+
+    for (int i=0; i<leftTwentyLineNumber; i++){
+
+        float _sumColor = linecolors[i].fRed + linecolors[i].fGreen + linecolors[i].fBlue;
+
+        LineOnOff _lineOnOff;
+
+        if (_sumColor<100) {
+            _lineOnOff.index = i;
+            _lineOnOff.bOnOff = true;
+            ofNotifyEvent(onOff[i], _lineOnOff);
+            ofRemoveListener(onOff[i], this, &ofApp::onOffTest);
+
+        } else {
+            _lineOnOff.index = i;
+            _lineOnOff.bOnOff = false;
+            ofNotifyEvent(onOff[i], _lineOnOff);
+            ofAddListener(onOff[i], this, &ofApp::onOffTest);
         }
-        
+
+
+        if (linecolors[i].bNoteTrigger) {
+            synth1.setParameter("trigger1", 1);
+            synth1.setParameter("carrierPitch1", scale[i]+80);
+            linecolors[i].bNoteTrigger = false;
+            circleMovings[i].movVertical = ofGetWidth()/2;
+            circleMovings[i].movingFactor = circleMovigSpeed;
+        }
+
+        if (circleMovings[i].bMovingTrigger) {
+            circleMovings[i].movVertical = circleMovings[i].movVertical - circleMovings[i].movingFactor;
+            if (circleMovings[i].movVertical < 0) {
+                circleMovings[i].movVertical = ofGetWidth()/2;
+                circleMovings[i].movingFactor = 0;
+            }
+        }
+
+    }
+
         //        }
-        
-        
-        if (twentyPixelColor.size()>20) {
+
+
+    if (twentyPixelColor.size()>20) {
             //            twentyPixelColor.clear();
             //            linecolors.clear();
-        }
-        
-        
     }
+
+
+    
     
     
 }
@@ -220,7 +220,7 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::onOffTest(LineOnOff & _lineOnOff){
-    
+
     if (_lineOnOff.bOnOff) {
         linecolors[_lineOnOff.index].bNoteTrigger = true;
         circleMovings[_lineOnOff.index].bMovingTrigger = true;
@@ -238,9 +238,9 @@ void ofApp::onOffTest(LineOnOff & _lineOnOff){
 
 //--------------------------------------------------------------
 void ofApp::draw() {
-    
+
     //    ofScale(0.5, 0.5);
-    
+
     ofPushMatrix();
     //    ofTranslate(0, ofGetHeight());
     //    ofRotateX(180);
@@ -249,68 +249,68 @@ void ofApp::draw() {
     tex.draw( ofGetWidth()*3/4 - cameraWidth * _videoRatio/4, 0, cameraWidth * _videoRatio, cameraHeight * _videoRatio );
     
     
-//    if (grabber.isFrameNew()) {
     
+    
+    if (pixelColor.size()>0) {
+
         ofPushMatrix();
         ofPushStyle();
-        
-        if (pixelColor.size()>0) {
-            for (int i=0; i<cameraHeight; i++) {
-                //                ofSetLineWidth(1);
-                ofSetColor(pixelColor[i]);
-                
-                float _leftEndHeight = 20;
-                float _leftEnd = ofGetHeight()/2 + (i * _leftEndHeight / cameraHeight) - _leftEndHeight/2;
-                
-                ofPoint _rightPoint = ofPoint( ofGetWidth()*6/8, i * _videoRatio );
-                ofPoint _leftPoint = ofPoint( ofGetWidth()*5/8, _leftEnd );
-                ofDrawLine(_leftPoint, _rightPoint);
-            }
+
+        for (int i=0; i<cameraHeight; i++) {
+            ofSetColor(pixelColor[i]);
+            //                ofSetLineWidth(1);
+            
+            float _leftEndHeight = 20;
+            float _leftEnd = ofGetHeight()/2 + (i * _leftEndHeight / cameraHeight) - _leftEndHeight/2;
+            
+            ofPoint _rightPoint = ofPoint( ofGetWidth()*6/8, i * _videoRatio );
+            ofPoint _leftPoint = ofPoint( ofGetWidth()*5/8, _leftEnd );
+            ofDrawLine(_leftPoint, _rightPoint);
         }
-        
-        
-        
+
+
         ofPopStyle();
         ofPopMatrix();
-        
-        
+
+
         ofPushMatrix();
         ofPushStyle();
-        
-        if (pixelColor.size()>0) {
-            for (int i=0; i<leftTwentyLineNumber; i++) {
-                ofSetColor(twentyPixelColor[i]);
-                //            ofSetLineWidth(1);
-                
-                float _leftEnd = ofGetHeight()/2 - leftTwentyLineNumber/2 + i;
-                float _left2ndEnd = ofGetHeight()/2 - leftTwentyLineNumber/2*20 + i*20;
-                
-                ofPoint _leftPoint = ofPoint(ofGetWidth()*5/8, _leftEnd);
-                ofPoint _rightPoint = ofPoint(ofGetWidth()*4/8, _left2ndEnd);
-                ofDrawLine(_leftPoint, _rightPoint);
-                
-                ofPoint _left2ndPoint = ofPoint(ofGetWidth()/2, _left2ndEnd);
-                ofPoint _right2ndPoint = ofPoint(0, _left2ndEnd);
-                ofDrawLine(_left2ndPoint, _right2ndPoint);
-            }
-        }
-        
-        ofPopStyle();
-        ofPopMatrix();
-        
-        
-        ofPushMatrix();
-        ofPushStyle();
-        
+
+
         for (int i=0; i<leftTwentyLineNumber; i++) {
-            ofDrawCircle(circleMovings[i].movVertical, circleMovings[i].position, 3);
+            ofSetColor(twentyPixelColor[i]);
+            //            ofSetLineWidth(1);
+            
+            float _leftEnd = ofGetHeight()/2 - leftTwentyLineNumber/2 + i;
+            float _left2ndEnd = ofGetHeight()/2 - leftTwentyLineNumber/2*20 + i*20;
+            
+            ofPoint _leftPoint = ofPoint(ofGetWidth()*5/8, _leftEnd);
+            ofPoint _rightPoint = ofPoint(ofGetWidth()*4/8, _left2ndEnd);
+            ofDrawLine(_leftPoint, _rightPoint);
+            
+            ofPoint _left2ndPoint = ofPoint(ofGetWidth()/2, _left2ndEnd);
+            ofPoint _right2ndPoint = ofPoint(0, _left2ndEnd);
+            ofDrawLine(_left2ndPoint, _right2ndPoint);
         }
-        
+
         ofPopStyle();
         ofPopMatrix();
-        
-        
-//    }
+
+    }
+    
+    
+    
+    ofPushMatrix();
+    ofPushStyle();
+    
+    for (int i=0; i<leftTwentyLineNumber; i++) {
+        float _leftEnd = ofGetHeight() / 2 - leftTwentyLineNumber / 2 * 20 + i * 20;
+        ofDrawCircle(circleMovings[i].movVertical, _leftEnd, 3);
+    }
+    
+    ofPopStyle();
+    ofPopMatrix();
+    
     
     
     
@@ -342,15 +342,15 @@ void ofApp::draw() {
 
 //--------------------------------------------------------------
 void ofApp::exit(){
-    
+
     //    std::exit(0);
-    
+
 }
 
 
 //--------------------------------------------------------------
 void ofApp::audioRequested(float *output, int Buffersize, int nChannels){
-    
+
     synthMain.fillBufferOfFloats(output, Buffersize, nChannels);
     
 }
@@ -367,47 +367,47 @@ void ofApp::audioRequested(float *output, int Buffersize, int nChannels){
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-    
+
 }
 
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){
-    
+
 }
 
 
 //--------------------------------------------------------------
 void ofApp::mouseMoved(int x, int y){
-    
+
 }
 
 
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button){
-    
+
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseDragged(int x, int y, int button){
-    
+
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
-    
+
 }
 
 //--------------------------------------------------------------
 void ofApp::windowResized(int w, int h){
-    
+
 }
 
 //--------------------------------------------------------------
 void ofApp::gotMessage(ofMessage msg){
-    
+
 }
 
 //--------------------------------------------------------------
 void ofApp::dragEvent(ofDragInfo dragInfo){
-    
+
 }
