@@ -1,10 +1,10 @@
 #pragma once
 
 #include "ofMain.h"
-
 #include "ofxTonic.h"
 
 using namespace Tonic;
+
 
 struct InputMovie {
     ofColor color;
@@ -24,6 +24,7 @@ struct LineColor {
     int index;
 };
 
+
 struct CircleMoving{
     float movingFactor;
     float movVertical;
@@ -37,6 +38,7 @@ struct LineOnOff{
     int index;
     bool bOnOff;
 };
+
 
 class ofApp : public ofBaseApp{
 	
@@ -80,10 +82,6 @@ public:
     ofTexture tex;
     unsigned char * pix;
     
-//    AVCaptureConnection         *videoConnection;
-//    AVCaptureVideoDataOutput    *videoOutput;
-//    AVCaptureDeviceInput        *videoInput;
-    
     
     vector<ofColor> pixelColor;
     vector<ofColor> twentyPixelColor;
@@ -105,23 +103,13 @@ public:
     int spectrogramWidth, spectrogramWidth2;
 
 	ofMutex soundMutex;
-    vector<float> drawBuffer, middleBuffer, audioBuffer;
     vector<float> drawBins, middleBins, audioBins;
 
-    vector<float> drawBuffer2, middleBuffer2, audioBuffer2;
     vector<float> drawBins2, middleBins2, audioBins2;
 
 	int plotHeight, bufferSize;
 
     void plot(vector<float>& buffer, float scale, float offset);
-
-    int spectrogramOffset;
-	ofImage spectrogram;
-
-    int spectrogramOffset2;
-	ofImage spectrogram2;
-
-    vector<int> spectrum1PosX, spectrum2PosX;
     
     int circleMovigSpeed;
     

@@ -11,31 +11,15 @@ void ofApp::setup(){
 
     ofSetFrameRate(60);
     
-    plotHeight = 128;
     bufferSize = 512;
+    plotHeight = 128;
     
-    
-    //  drawBuffer.resize(bufferSize);
-    //  middleBuffer.resize(bufferSize);
-    //	audioBuffer.resize(bufferSize);
-    //
-    //  drawBuffer2.resize(bufferSize);
-    //	middleBuffer2.resize(bufferSize);
-    //	audioBuffer2.resize(bufferSize);
-    //
-    //  spectrogram.allocate(bufferSize*2, plotHeight, OF_IMAGE_GRAYSCALE);
-    //	memset(spectrogram.getPixels(), 0, (int) (spectrogram.getWidth() * spectrogram.getHeight()) );
-    //	spectrogramOffset = 0;
-    //
-    //  spectrogram2.allocate(bufferSize*2, plotHeight, OF_IMAGE_GRAYSCALE);
-    //	memset(spectrogram2.getPixels(), 0, (int) (spectrogram2.getWidth() * spectrogram2.getHeight()) );
-    //	spectrogramOffset2 = 0;
     
     ofBackground(10, 255);
     
     //  cameraDevice = 1;
-    //  grabber.setDeviceID(cameraDevice);
-    //  grabber.setDesiredFrameRate(30);
+    grabber.setDeviceID(0);
+//    grabber.setDesiredFrameRate(30);
     
     cameraWidth = 640;
     cameraHeight = 480;
@@ -45,7 +29,7 @@ void ofApp::setup(){
     tex.allocate(cameraWidth, cameraHeight, GL_RGB);
     
     
-    pix = new unsigned char[ (int)( cameraWidth * cameraHeight * 3.0) ];
+    pix = new unsigned char[ (int)( cameraWidth * cameraHeight * 3.0 ) ];
     
     //    videoInput = [[AVCaptureDeviceInput alloc] init];
     
@@ -58,17 +42,17 @@ void ofApp::setup(){
     ControlGenerator rModFreq1 = rCarrierFreq1 * 0.489;
     Generator modulationTone1 = SineWave().freq( rModFreq1 ) * rModFreq1 * amountMod1;
     Generator tone1 = SineWave().freq(rCarrierFreq1 + modulationTone1);
-    ControlGenerator envelopTrigger1 = synth1.addParameter("trigger1");
+    ControlGenerator envelopTrigger1 = synth1.addParameter( "trigger1");
     Generator env1 = ADSR().attack(0.001).decay(0.2).sustain(0).release(0).trigger(envelopTrigger1).legato(false);
     synth1.setOutputGen( tone1 * env1 * 0.75 );
     
-    synthMain.setOutputGen( synth1 * 0.8f );
+    synthMain.setOutputGen( synth1 * 0.8 );
     
     for (int i=0; i<leftTwentyLineNumber; i++) {
         CircleMoving _lc;
         _lc.movingFactor = 3;
-        _lc.movVertical = ofGetWidth()/2;
-        float _left2ndEnd = ofGetHeight()/2.0 - leftTwentyLineNumber * 10 + i*10;
+        _lc.movVertical = ofGetWidth() / 2;
+        float _left2ndEnd = ofGetHeight() / 2.0 - leftTwentyLineNumber * 10 + i * 10;
         _lc.position = _left2ndEnd;
         circleMovings.push_back(_lc);
     }
@@ -79,8 +63,7 @@ void ofApp::setup(){
     ofSoundStreamSettings settings;
     settings.setOutListener(this);
     settings.sampleRate = 44100;
-    auto devices = soundStream.getMatchingDevices("default");
-    //        auto devices = soundStream.getDeviceList();
+    auto devices = soundStream.getDeviceList();
     if (!devices.empty()) {
         settings.setOutDevice(devices[1]);
     }
@@ -95,13 +78,6 @@ void ofApp::setup(){
     int _leftLineRatio = (int)cameraHeight / leftTwentyLineNumber;
     twentyPixelColor.resize(_leftLineRatio);
     linecolors.resize(leftTwentyLineNumber);
-    
-    
-    //    ofSoundStreamSetup(2, 0, this, 44100, 256, 4);
-    
-    //    soundStream.setDeviceID(1);
-    //    soundStream.setup(this, 2, 0, 44100, 256, 4);
-    
     
 }
 
@@ -125,8 +101,11 @@ void ofApp::update(){
         }
         
     }
+    
+    
     tex.loadData(pix, cameraWidth, cameraHeight, GL_RGB);
 
+    
     for (int i=0; i<cameraHeight; i++){
         int _index = cameraWidth * 3 * i + cameraWidth * 3.0 / 4.0;
         ofColor _temp;
@@ -141,7 +120,7 @@ void ofApp::update(){
 
     int _countIndex = -1;
     for (int i=0; i<cameraHeight; i+=_leftLineRatio) {
-        int _index = cameraWidth*3 * i + cameraWidth*3/4;
+        int _index = cameraWidth * 3 * i + cameraWidth * 3.0 / 4.0;
         _countIndex++;
         ofColor _temp;
         _temp.r = pix[_index];
@@ -157,20 +136,13 @@ void ofApp::update(){
 
     }
 
-        //        if (pixelColor.size()>cameraHeight) {
-        //            pixelColor.clear();
-        //        }
-
-
-        //        if (linecolors.size() > 0) {
-
     for (int i=0; i<leftTwentyLineNumber; i++){
 
         float _sumColor = linecolors[i].fRed + linecolors[i].fGreen + linecolors[i].fBlue;
 
         LineOnOff _lineOnOff;
 
-        if (_sumColor<100) {
+        if (_sumColor < 200) {
             _lineOnOff.index = i;
             _lineOnOff.bOnOff = true;
             ofNotifyEvent(onOff[i], _lineOnOff);
@@ -186,7 +158,7 @@ void ofApp::update(){
 
         if (linecolors[i].bNoteTrigger) {
             synth1.setParameter("trigger1", 1);
-            synth1.setParameter("carrierPitch1", scale[i]+80);
+            synth1.setParameter("carrierPitch1", scale[i] + 80);
             linecolors[i].bNoteTrigger = false;
             circleMovings[i].movVertical = ofGetWidth()/2;
             circleMovings[i].movingFactor = circleMovigSpeed;
@@ -195,23 +167,12 @@ void ofApp::update(){
         if (circleMovings[i].bMovingTrigger) {
             circleMovings[i].movVertical = circleMovings[i].movVertical - circleMovings[i].movingFactor;
             if (circleMovings[i].movVertical < 0) {
-                circleMovings[i].movVertical = ofGetWidth()/2;
+                circleMovings[i].movVertical = ofGetWidth() * 0.5;
                 circleMovings[i].movingFactor = 0;
             }
         }
 
     }
-
-        //        }
-
-
-    if (twentyPixelColor.size()>20) {
-            //            twentyPixelColor.clear();
-            //            linecolors.clear();
-    }
-
-
-    
     
     
 }
@@ -239,16 +200,11 @@ void ofApp::onOffTest(LineOnOff & _lineOnOff){
 //--------------------------------------------------------------
 void ofApp::draw() {
 
-    //    ofScale(0.5, 0.5);
 
     ofPushMatrix();
-    //    ofTranslate(0, ofGetHeight());
-    //    ofRotateX(180);
-    
+
     float _videoRatio = 1;
-    tex.draw( ofGetWidth()*3/4 - cameraWidth * _videoRatio/4, 0, cameraWidth * _videoRatio, cameraHeight * _videoRatio );
-    
-    
+    tex.draw( ofGetWidth() * 3.0/4.0 - cameraWidth * _videoRatio * 1.0/4.0, 0, cameraWidth * _videoRatio, cameraHeight * _videoRatio );
     
     
     if (pixelColor.size()>0) {
@@ -261,10 +217,10 @@ void ofApp::draw() {
             //                ofSetLineWidth(1);
             
             float _leftEndHeight = 20;
-            float _leftEnd = ofGetHeight()/2 + (i * _leftEndHeight / cameraHeight) - _leftEndHeight/2;
+            float _leftEnd = ofGetHeight() * 0.5 + (i * _leftEndHeight / cameraHeight) - _leftEndHeight * 0.5;
             
-            ofPoint _rightPoint = ofPoint( ofGetWidth()*6/8, i * _videoRatio );
-            ofPoint _leftPoint = ofPoint( ofGetWidth()*5/8, _leftEnd );
+            ofPoint _rightPoint = ofPoint( ofGetWidth() * 6.0/8.0, i * _videoRatio );
+            ofPoint _leftPoint = ofPoint( ofGetWidth() * 5.0/8.0, _leftEnd );
             ofDrawLine(_leftPoint, _rightPoint);
         }
 
@@ -282,13 +238,13 @@ void ofApp::draw() {
             //            ofSetLineWidth(1);
             
             float _leftEnd = ofGetHeight()/2 - leftTwentyLineNumber/2 + i;
-            float _left2ndEnd = ofGetHeight()/2 - leftTwentyLineNumber/2*20 + i*20;
+            float _left2ndEnd = ofGetHeight()/2 - leftTwentyLineNumber * 0.5 * 20 + i * 20;
             
-            ofPoint _leftPoint = ofPoint(ofGetWidth()*5/8, _leftEnd);
-            ofPoint _rightPoint = ofPoint(ofGetWidth()*4/8, _left2ndEnd);
+            ofPoint _leftPoint = ofPoint(ofGetWidth() * 5.0/8.0, _leftEnd);
+            ofPoint _rightPoint = ofPoint(ofGetWidth() * 4.0/8.0, _left2ndEnd);
             ofDrawLine(_leftPoint, _rightPoint);
             
-            ofPoint _left2ndPoint = ofPoint(ofGetWidth()/2, _left2ndEnd);
+            ofPoint _left2ndPoint = ofPoint(ofGetWidth() * 0.5, _left2ndEnd);
             ofPoint _right2ndPoint = ofPoint(0, _left2ndEnd);
             ofDrawLine(_left2ndPoint, _right2ndPoint);
         }
@@ -304,7 +260,7 @@ void ofApp::draw() {
     ofPushStyle();
     
     for (int i=0; i<leftTwentyLineNumber; i++) {
-        float _leftEnd = ofGetHeight() / 2 - leftTwentyLineNumber / 2 * 20 + i * 20;
+        float _leftEnd = ofGetHeight() * 0.5 - leftTwentyLineNumber * 0.5 * 20 + i * 20;
         ofDrawCircle(circleMovings[i].movVertical, _leftEnd, 3);
     }
     
