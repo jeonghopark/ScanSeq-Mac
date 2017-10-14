@@ -8,30 +8,20 @@ int scale[20] = {-48,-24,-10,0,2,4,5,7,9,11,12,14,16,17,19,21,23,24,36,48};
 //--------------------------------------------------------------
 void ofApp::setup(){
     
-    
     ofSetFrameRate(60);
     
-    bufferSize = 512;
-    plotHeight = 128;
+    ofEnableAntiAliasing();
     
+    ofBackground(0);
     
-    ofBackground(10, 255);
-    
-    //  cameraDevice = 1;
     grabber.setDeviceID(0);
-    //    grabber.setDesiredFrameRate(30);
-    
     cameraWidth = 640;
     cameraHeight = 480;
     
-    //	grabber.initGrabber(cameraWidth, cameraHeight);
     grabber.setup(cameraWidth, cameraHeight);
     tex.allocate(cameraWidth, cameraHeight, GL_RGB);
     
-    
     pix = new unsigned char[ (int)( cameraWidth * cameraHeight * 3.0 ) ];
-    
-    //    videoInput = [[AVCaptureDeviceInput alloc] init];
     
     leftTwentyLineNumber = 20;
     
@@ -64,8 +54,9 @@ void ofApp::setup(){
     settings.setOutListener(this);
     settings.sampleRate = 44100;
     auto devices = soundStream.getDeviceList();
+    cout << devices << endl;
     if (!devices.empty()) {
-        settings.setOutDevice(devices[1]);
+        settings.setOutDevice(devices[3]);
     }
     settings.numOutputChannels = 2;
     settings.numInputChannels = 0;
@@ -206,7 +197,6 @@ void ofApp::draw() {
     
     if (pixelColor.size()>0) {
         
-        ofPushMatrix();
         ofPushStyle();
         
         for (int i=0; i<cameraHeight; i++) {
@@ -238,13 +228,11 @@ void ofApp::draw() {
         }
         
         ofPopStyle();
-        ofPopMatrix();
         
     }
     
     
     
-    ofPushMatrix();
     ofPushStyle();
     
     for (int i=0; i<leftTwentyLineNumber; i++) {
@@ -253,35 +241,22 @@ void ofApp::draw() {
     }
     
     ofPopStyle();
-    ofPopMatrix();
     
     
-    ofPushMatrix();
     ofPushStyle();
     ofSetColor(ofColor::fromHsb(0, 0, 255, 255));
     ofDrawBitmapString( "Fr : " + ofToString(ofGetFrameRate(), 1), 10, ofGetHeight()-15 );
     ofPopStyle();
-    ofPopMatrix();
     
     
     
-    ofPushMatrix();
     ofPushStyle();
     ofSetColor(0, 255, 0, 255);
-    ofLine(ofGetWidth() * 6.0/8.0, 0, ofGetWidth() * 6.0/8.0, ofGetHeight());
-    ofLine(ofGetWidth() * 6.0/8.0 + 10, 0, ofGetWidth() * 6.0/8.0 + 10, ofGetHeight());
-    ofLine(ofGetWidth() * 6.0/8.0 - 10, 0, ofGetWidth() * 6.0/8.0 - 10, ofGetHeight());
+    ofDrawLine(ofGetWidth() * 6.0/8.0, 0, ofGetWidth() * 6.0/8.0, ofGetHeight());
+    ofDrawLine(ofGetWidth() * 6.0/8.0 + 10, 0, ofGetWidth() * 6.0/8.0 + 10, ofGetHeight());
+    ofDrawLine(ofGetWidth() * 6.0/8.0 - 10, 0, ofGetWidth() * 6.0/8.0 - 10, ofGetHeight());
     ofPopStyle();
-    ofPopMatrix();
     
-    
-}
-
-
-//--------------------------------------------------------------
-void ofApp::exit(){
-    
-    //    std::exit(0);
     
 }
 
@@ -292,14 +267,6 @@ void ofApp::audioRequested(float *output, int Buffersize, int nChannels){
     synthMain.fillBufferOfFloats(output, Buffersize, nChannels);
     
 }
-
-
-//--------------------------------------------------------------
-//void ofApp::audioOut(ofSoundBuffer & buffer){
-//
-////    synthMain.fillBufferOfFloats(buffer.getBuffer().data(), 256, 4);
-//
-//}
 
 
 

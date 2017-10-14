@@ -53,7 +53,6 @@ public:
     void setup();
     void update();
     void draw();
-    void exit();
 
     void keyPressed(int key);
     void keyReleased(int key);
@@ -66,7 +65,6 @@ public:
     void gotMessage(ofMessage msg);
 
     void audioRequested(float * output, int Buffersize, int nChannels);
-//    void audioOut(ofSoundBuffer & buffer);
 
     ofSoundStream soundStream;
 
@@ -94,22 +92,6 @@ public:
     vector<InputMovie> inputVideo;
     
     int cameraWidth, cameraHeight;
-    
-    float touchMovY;
-    
-    float parameter1, parameter2, parameter3, parameter4, parameter5;
-    float secondParameter1, secondParameter2, secondParameter3, secondParameter4, secondParameter5;
-    
-    int spectrogramWidth, spectrogramWidth2;
-
-	ofMutex soundMutex;
-    vector<float> drawBins, middleBins, audioBins;
-
-    vector<float> drawBins2, middleBins2, audioBins2;
-
-	int plotHeight, bufferSize;
-
-    void plot(vector<float>& buffer, float scale, float offset);
     
     int circleMovigSpeed;
     
