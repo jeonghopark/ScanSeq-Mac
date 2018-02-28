@@ -56,7 +56,7 @@ void ofApp::setup(){
     auto devices = soundStream.getDeviceList();
     cout << devices << endl;
     if (!devices.empty()) {
-        settings.setOutDevice(devices[3]);
+        settings.setOutDevice(devices[1]);
     }
     settings.numOutputChannels = 2;
     settings.numInputChannels = 0;
